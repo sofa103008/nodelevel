@@ -31,16 +31,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // Определяем поведение MCU при различных значениях сообщения (payload)
     if ((char)payload[0] == '0') {
       digitalWrite(BUILTIN_LED, HIGH); // BUILTIN_LED имеет подтягивающий резистор, HIGH = OFF, LOW = ON
+      // read level sensor
+      // read the state of the level sensor value
+      levelState = digitalRead(levelSensorPin);
+ 
+      if (levelState == HIGH) {
+        // turn LED on
+         Serial.print("Level high");
+         client.publish(mqtt_topic_out, "Level high");
+      } else {
+        // turn LED off
+        Serial.print("Level low");
+        client.publish(mqtt_topic_out, "Level low");
+      }
     }
     if ((char)payload[0] == '1') {
       digitalWrite(BUILTIN_LED, LOW);
+      
     }
   }
 }
 
-void readLevelSensorStatus(){
-  
-}
 
 void setup() {
   // put your setup code here, to run once:
