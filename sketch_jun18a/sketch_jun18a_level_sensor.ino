@@ -10,9 +10,9 @@ int  delayMS = 30000;  // Задаержка в мс между публикац
 long lastMsg = 0;      // Время публикации предыдущего сообщения  (мс) 
 int  value = 0;        // Переменная для формирования публикуемого сообщения
 
-const int levelSensorPin = 4; // the number of the pushbutton pin
+const int levelSensorPin = 4; // the number of the level sensor pin
 // variable for storing the level sensor status
-int buttonState = 0;
+int levelState = 0;
 
 
 // Функция обработки входящих сообщений
@@ -38,20 +38,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
+void readLevelSensorStatus(){
+  
+}
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(BUILTIN_LED, OUTPUT);     // Установка BUILTIN_LED как порт вывода
   digitalWrite(BUILTIN_LED, HIGH);  // BUILTIN_LED имеет подтягивающий резистор, HIGH = OFF, LOW = ON
+  // initialize the level sensor pin as an input
+  pinMode(levelSensorPin, INPUT);
 
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
-
-  // initialize the level sensor pin as an input
-  pinMode(levelSensorPin, INPUT);
-
+  
 }
 
 void loop() {
@@ -72,24 +74,20 @@ void loop() {
     snprintf (msg, sizeof(msg), "heartbeat #%ld", value);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish(mqtt_topic_out, msg);
-  
-  // read the state of the level sensor value
-  buttonState = digitalRead(levelSensorPin);
+    client.publish(mqtt_topic_status, msg);
+
+    // read the state of the level sensor value
+    levelState = digitalRead(levelSensorPin);
  
-  if (buttonState == HIGH) {
+    if (levelState == HIGH) {
     // turn LED on
-    Serial.print("Level high");
-    client.publish(mqtt_topic_out, "Level high");
-  } else {
+       Serial.print("Level high");
+       client.publish(mqtt_topic_out, "Level high");
+    } else {
     // turn LED off
-    Serial.print("Level low");
-    client.publish(mqtt_topic_out, "Level low");
+      Serial.print("Level low");
+      client.publish(mqtt_topic_out, "Level low");
+    }
+    
   }
-  
-  
-  }
-
-  
-
 }

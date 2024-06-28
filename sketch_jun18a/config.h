@@ -13,7 +13,7 @@
 #define mqtt_pass     NULL
 
 // MQTT топики
-#define mqtt_topic_status  "flowmeter"
-#define mqtt_topic_out     "flowmeter"
-#define mqtt_topic_in      "flowmeter"
+#define mqtt_topic_status  "tank1/status"
+#define mqtt_topic_out     "tank1/level_out"
+#define mqtt_topic_in      "tank1/level_in"
     
